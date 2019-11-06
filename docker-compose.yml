@@ -1,0 +1,35 @@
+version: "3"
+
+services:
+  db:
+    # path to the Dockerfile
+    build: ./PostgreSQL-Docker/
+    container_name: PostgreSQL-Docker
+    # host:container
+    ports:
+      - "15432:5432"
+    # which network to connect this container with
+    networks:
+      docker_sql_network:
+        ipv4_address: 172.168.0.2
+  python_docker:
+    build: ./Application-Docker/
+    container_name: Python-Docker
+    # host:container
+    ports:
+      - "25432:5000"
+    # python_docker is built after db
+    depends_on:
+      - db
+    # command: ["./wait-for-postgres.sh", "python", "ConnectDB.py"]
+    networks:
+      docker_sql_network:
+        ipv4_address: 172.168.0.3
+
+# the common network for container communication
+networks:
+  docker_sql_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "172.168.0.0/24"

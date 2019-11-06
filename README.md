@@ -1,14 +1,21 @@
-# Proj name
+# Monitor open vacancies with headhunter API
+This project aims to store open vacancies to the PostgreSQL database in a docker container. If a vacancy is no longer present at the website it's marked as 'closed' in the database. Monitoring is issued once per 24 hours.
+
+## Build containers with docker-compose
 Pull the repository with
 
-``
+`git clone https://github.com/undadasea/headhunter-monitor.git`
 
-## Build PostgreSQL Docker
-To build PostgreSQL Docker (from PostgreSQL-Docker direcrory):
-*Please, be noticed that in the Dockerfile the current latest version of ubuntu is bionic. Edit the Dockerfile according to your current situation.*
+*Please, be noticed that in the Dockerfile of PostgreSQL-Docker the current latest version of ubuntu is bionic. Edit the Dockerfile according to your current situation.*
 
-`$ docker build -t your-dockerImage-name .`
+For Linux OS:
 
-Run an instance of the docker image you have just created
+`$ cd website-monitoring`
 
-`docker run --rm -P --name PostgreSQL-Docker your-dockerImage-name`
+`$ sudo apt-get install docker-compose`
+
+`$ docker-compose build`
+
+`$ docker-compose up`
+
+If you change any file you should start with "build" command again.
