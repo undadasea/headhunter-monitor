@@ -33,20 +33,13 @@ VOLUME  ["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql"]
 
 # RUN psql --command "\c postgres_docker" && psql --command "CREATE TABLE vacancies (id int, name varchar(60));"
 
-ADD create_user.sh /
-
-USER root
-
-RUN ./create_user.sh
-
-USER postgres
-
+#ADD create_user.sh /
 #
-#RUN /usr/lib/postgresql/11/bin/postgres -D /var/lib/postgresql/11/main -c config_file=/etc/postgresql/11/main/postgresql.conf
+#USER root
 #
-#USER postgres_docker
+#RUN ./create_user.sh
 #
-#RUN psql --command "CREATE TABLE vacancies (id int, name varchar(60));"
+#USER postgres
 
 # Set the default command to run when starting the container (is overwritten if pass any command with "docker run ... command")
 CMD ["/usr/lib/postgresql/11/bin/postgres", "-D", "/var/lib/postgresql/11/main", "-c", "config_file=/etc/postgresql/11/main/postgresql.conf"]

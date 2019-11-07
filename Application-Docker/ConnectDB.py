@@ -12,7 +12,7 @@ hostname = '172.168.0.2'
 port = '5432'
 username = 'postgres_docker'
 password = 'dockerPass'
-database = 'template1'
+database = 'db_vacancies'
 
 # Simple routine to run a query on a database and print the results:
 def doQuery( conn ) :
