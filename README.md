@@ -6,16 +6,30 @@ Pull the repository with
 
 `git clone https://github.com/undadasea/headhunter-monitor.git`
 
-*Please, be noticed that in the Dockerfile of PostgreSQL-Docker the current latest version of ubuntu is bionic. Edit the Dockerfile according to your current situation.*
+*Please, be noticed that in the Dockerfile of PostgreSQL-Docker the current latest version of ubuntu is bionic. Edit the Dockerfile according to the current situation.*
 
-For Linux OS:
+For GNU/Linux OS:
 
-`$ cd website-monitoring`
+`$ cd website-monitoring
 
-`$ sudo apt-get install docker-compose`
+$ sudo apt-get install docker-compose
 
-`$ docker-compose build`
+$ docker-compose build
 
-`$ docker-compose up`
+$ docker-compose up
 
-If you change any file you should start with "build" command again.
+$ docker-compose rm` after finishing working with containers
+
+If you change any file you should start with "build" command again. It's possible that you may need to delete previously created images and containers if some problem occurs. Try:
+
+`$ docker system prune`
+
+or delete images, containers and networks manually with:
+
+`$ docker ps -a
+
+$ docker rm ID_or_Name`
+
+`$ docker images -a
+
+$ docker rmi image`
