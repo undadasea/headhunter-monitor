@@ -9,8 +9,8 @@ Pull the repository with
 *Please, be noticed that in the Dockerfile of PostgreSQL-Docker the current latest version of ubuntu is bionic. Edit the Dockerfile according to the current situation.*
 
 For GNU/Linux OS:
-
-`$ cd website-monitoring
+```
+$ cd website-monitoring
 
 $ sudo apt-get install docker-compose
 
@@ -18,7 +18,9 @@ $ docker-compose build
 
 $ docker-compose up
 
-$ docker-compose rm` after finishing working with containers
+$ docker-compose rm  
+```
+after finishing working with containers
 
 If you change any file you should start with "build" command again. It's possible that you may need to delete previously created images and containers if some problem occurs. Try:
 
@@ -26,10 +28,14 @@ If you change any file you should start with "build" command again. It's possibl
 
 or delete images, containers and networks manually with:
 
-`$ docker ps -a
+```
+$ docker ps -a
 
-$ docker rm ID_or_Name`
+$ docker rm ID_or_Name
+```
 
-`$ docker images -a
+```
+$ docker images -a
 
-$ docker rmi image`
+$ docker rmi image
+```
