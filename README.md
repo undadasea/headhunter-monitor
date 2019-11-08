@@ -3,9 +3,9 @@ This project aims to store open vacancies to the PostgreSQL database in a docker
 
 ## Build containers with docker-compose
 Pull the repository with
-
-`git clone https://github.com/undadasea/headhunter-monitor.git`
-
+```
+git clone https://github.com/undadasea/headhunter-monitor.git
+```
 *Please, be noticed that in the Dockerfile of PostgreSQL-Docker the current latest version of ubuntu is bionic. Edit the Dockerfile according to the current situation.*
 
 For GNU/Linux OS:
@@ -20,11 +20,12 @@ $ docker-compose up
 
 $ docker-compose rm  
 ```
-after finishing working with containers
+after finishing working with containers.
 
-If you change any file you should start with "build" command again. It's possible that you may need to delete previously created images and containers if some problem occurs. Try:
-
-`$ docker system prune`
+If you change any file you should start with "build" command again. It's possible that you may need to delete previously created images, containers and networks if some problem occurs. Try:
+```
+$ docker system prune
+```
 
 or delete images, containers and networks manually with:
 
@@ -38,4 +39,10 @@ $ docker rm ID_or_Name
 $ docker images -a
 
 $ docker rmi image
+```
+
+```
+$ docker network ls
+
+$ docker network rm net_name
 ```
