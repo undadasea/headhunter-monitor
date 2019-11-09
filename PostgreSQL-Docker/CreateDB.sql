@@ -15,7 +15,9 @@ CREATE TABLE vacancies (id int unique not null,
                         requirement text,
                         responsibility text,
                         contact_id int,
-                        last_update timestamptz
+                        last_update timestamptz,
+                        job varchar(10),
+                        developer_experience varchar(10)
                        );
 
 CREATE TABLE employers (id int CONSTRAINT id_constr UNIQUE,
