@@ -1,4 +1,4 @@
-version: "3.2"
+version: "3.3"
 
 services:
   db:
@@ -13,7 +13,9 @@ services:
       docker_sql_network:
         ipv4_address: 172.168.0.2
   python_docker:
-    build: ./Application-Docker/
+    build:
+      context: .
+      dockerfile: /Application-Docker/Dockerfile
     container_name: Python-Docker
     # host:container
     ports:
