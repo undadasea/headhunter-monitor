@@ -44,9 +44,9 @@ $ docker network ls
 $ docker network rm net_name
 ```
 
-To set a scheduled monitoring work you should set a daemon as:
+## To set a scheduled monitoring work you should set a daemon as:
 ```
-$ echo "02 15	* * *	root    docker-compose -f /path/to/website-monitoring/docker-compose.yml" >> /etc/crontab
+$ echo "02 15	* * *	root    docker-compose -f /path/to/website-monitoring/docker-compose.yml up" >> /etc/crontab
 ```
 
 PostgreSQL-Docker continues working after Application-Docker finishes its work. You can stop the PostgreSQL-Docker at this point.
@@ -58,7 +58,7 @@ $ docker exec -it <ID container> bash
 root@<ID container>:/# psql -h localhost -p 5432 -U postgres_docker -d db_vacancies
 ```
 
-Table vacancies example:
+### Table vacancies example:
 
 ```
 name                                                                                             |   job    | developer_experience
@@ -68,16 +68,15 @@ Manual QA engineer                                                              
 Специалист по тестированию/Manual QA                                                             | No Match | No Match
 Контент-менеджер                                                                                 | manager  | No Match
 Менеджер B2B продаж в IT (AR/VR/MR)                                                              | manager  | No Match
+IOS разработчик                                                                                  | engineer | middle
 HR-менеджер                                                                                      | manager  | No Match
 Таргетолог социальных медиа (Social Advertising Manager)                                         | manager  | No Match
 Менеджер по работе с клиентами (м. Проспект Ветеранов, проспект Ветеранов)                       | manager  | No Match
 Руководитель портала                                                                             | engineer | No Match
 Офис-менеджер/Помощник бухгалтера                                                                | manager  | No Match
-IT рекрутер                                                                                      | engineer | middle
 Веб-дизайнер / UI UX дизайнер - в студию                                                         | No Match | No Match
 Оператор call-центра                                                                             | No Match | No Match
 Software testing engineer (BI, ETL, DB)                                                          | engineer | No Match
 Менеджер по работе с клиентами (м. Проспект Ветеранов, ул. Доблести)                             | manager  | No Match
 Web-дизайнер ⁢/ Веб-дизайнер                                                                      | No Match | No Match
-IOS разработчик                                                                                  | engineer | middle
 ```

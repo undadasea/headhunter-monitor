@@ -21,7 +21,7 @@ CREATE TABLE vacancies (id int unique not null,
                        );
 
 CREATE TABLE employers (id int CONSTRAINT id_constr UNIQUE,
-                        name varchar(60)
+                        name text
                        );
 
 CREATE TABLE addresses (id serial unique,
