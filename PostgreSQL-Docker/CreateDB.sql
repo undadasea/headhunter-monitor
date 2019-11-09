@@ -1,5 +1,5 @@
-CREATE TABLE vacancies (id int not null,
-                        name varchar(60),
+CREATE TABLE vacancies (id int unique not null,
+                        name text,
                         premium boolean,
                         has_test boolean,
                         letter_required boolean,
@@ -10,18 +10,16 @@ CREATE TABLE vacancies (id int not null,
                         type varchar(30),
                         employer_id int not null,
                         address_id int,
-                        created_at time,
-                        published_at time,
+                        created_at timestamptz,
+                        published_at timestamptz,
                         requirement text,
                         responsibility text,
                         contact_id int,
-                        last_update time
+                        last_update timestamptz
                        );
 
-CREATE TABLE employers (id int not null,
-                        name varchar(60),
-                        address_id int,
-                        contact_id int
+CREATE TABLE employers (id int CONSTRAINT id_constr UNIQUE,
+                        name varchar(60)
                        );
 
 CREATE TABLE addresses (id serial unique,
@@ -35,5 +33,5 @@ CREATE TABLE contact_person (id serial unique,
                              employer_id int,
                              email varchar(40),
                              phone varchar(15),
-                             comment varchar(60)
+                             comment text
                             );

@@ -56,3 +56,10 @@ $ echo "02 15	* * *	root    docker-compose -f /path/to/website-monitoring/docker
 ```
 
 PostgreSQL-Docker continues working after Application-Docker finishes its work. You can stop the PostgreSQL-Docker at this point.
+
+To enter the docker while it's running you can use:
+```
+$ docker ps
+$ docker exec -it <ID container> bash
+root@<ID container>:/# psql -h localhost -p 5432 -U postgres_docker -d db_vacancies
+```

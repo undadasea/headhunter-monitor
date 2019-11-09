@@ -1,8 +1,9 @@
 """ Python script to connect and to create databases needed in PostgreSQL docker """
 # TODO: check if I can delete create_user.sh
 import psycopg2
+import pytz
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 import http.client
 import json
 
@@ -12,6 +13,13 @@ def getJSONresponse(connection):
     string = response.read().decode('utf-8').replace('null', '"null"')
     json_obj = json.loads(string)
     return json_obj
+
+def getTime():
+    utc_now = pytz.utc.localize(datetime.utcnow())
+    pst_now = utc_now.astimezone(pytz.timezone("Europe/Moscow"))
+    print("in func: ", pst_now)
+    print("in func iso:", pst_now.isoformat())
+    return pst_now
 
 def selectVacancyID(cursor, id_found):
     #cursor = conn.cursor()
@@ -27,47 +35,58 @@ def insertAddressID(cursor, vacancy):
     # check if one exists
     cursor.execute("SELECT id FROM addresses  \
                     WHERE address = "+"\'"+vacancy['address']['raw']+"\'"+";")
-    result = cursor.fetchone()
-    if result:
-        cursor.execute("UPDATE vacancies SET address_id = "+str(result[0])+
-                        " WHERE id = "+str(vacancy['id'])+";")
-    else:
-        cursor.execute("INSERT INTO addresses(address, metro, employer_id) \
+    result = cursor.fetchall()
+    if result == []:
+        cursor.execute("INSERT INTO addresses(address, employer_id) \
                         VALUES (\'" + vacancy['address']['raw'] + "\',"
-                                "\'"+ vacancy['address']['metro'] + "\',"
                                 + str(vacancy['employer']['id']) +");")
 
         cursor.execute("SELECT id FROM addresses  \
                         WHERE address = " + "\'"+vacancy['address']['raw']+"\';")
-        result = cursor.fetchone()
-        cursor.execute("UPDATE vacancies SET address_id = "+str(result[0]) +
-                       " WHERE id = "+str(vacancy['id'])+";")
+        result = cursor.fetchall()
+
+        if vacancy['address']['metro'] != "null":
+            cursor.execute("UPDATE addresses SET metro = " +
+                      "\'"+ vacancy['address']['metro']['station_name'] + "\' "+
+                      "WHERE id = "+ str(result[0][0]) +";")
+
+    cursor.execute("UPDATE vacancies SET address_id = "+str(result[0][0])+
+                    " WHERE id = "+str(vacancy['id'])+";")
+    # cursor.execute("UPDATE employers SET address_id = "+str(result[0][0])+
+    #                 " WHERE id = "+str(vacancy['employer']['id'])+";")
 
 def insertContactID(cursor, vacancy):
     cursor.execute("SELECT id FROM contact_person  \
                     WHERE name = "+"\'"+vacancy['contacts']['name']+"\'"+";")
-    result = cursor.fetchone()
-    if result:
-        cursor.execute("UPDATE vacancies SET contact_id = "+str(result[0])+
-                        " WHERE id = "+str(vacancy['id'])+";")
-    else:
-        cursor.execute("INSERT INTO contact_person(name, employer_id, email, phone, comment) \
+    result = cursor.fetchall()
+    if result == []:
+        cursor.execute("INSERT INTO contact_person(name, employer_id, email) \
                         VALUES (\'" + vacancy['contacts']['name'] + "\'," +
                                   str(vacancy['employer']['id']) + "," +
-                                 "\'"+vacancy['contacts']['email'] + "\'," +
-                                  str(vacancy['contacts']['phones'][0]['country']) +
-                                  str(vacancy['contacts']['phones'][0]['city'])+
-                                  str(vacancy['contacts']['phones'][0]['number']) + "," +
-                                 "\'"+vacancy['contacts']['phones'][0]['comment'] +"\');")
+                                 "\'"+vacancy['contacts']['email'] + "\');")
+
         cursor.execute("SELECT id FROM contact_person  \
                         WHERE name = "+"\'"+vacancy['contacts']['name']+"\'"+";")
-        result = cursor.fetchone()
-        cursor.execute("UPDATE vacancies SET contact_id = "+str(result[0])+
-                        " WHERE id = "+str(vacancy['id'])+";")
+        result = cursor.fetchall()
+        print("result = ", result)
+
+        if vacancy['contacts']['phones'] != []:
+            cursor.execute("UPDATE contact_person \
+                            SET phone = "+str(vacancy['contacts']['phones'][0]['country'])+
+                                          str(vacancy['contacts']['phones'][0]['city'])+
+                                          str(vacancy['contacts']['phones'][0]['number']) + ", \
+                                comment = \'"+(vacancy['contacts']['phones'][0]['comment'])+"\' "+
+                            "WHERE id = "+str(result[0][0])+";")
+
+    cursor.execute("UPDATE vacancies SET contact_id = "+str(result[0][0])+
+                    " WHERE id = "+str(vacancy['id'])+";")
+    # cursor.execute("UPDATE employers SET contact_id = "+str(result[0][0])+
+    #                 " WHERE id = "+str(vacancy['employer']['id'])+";")
 
 
 def insertVacancy(cursor, vacancy):
     #cursor = conn.cursor()
+    print("in insert: ", vacancy)
     cursor.execute("INSERT INTO vacancies(id, \
                                           name, \
                                           premium, \
@@ -91,7 +110,9 @@ def insertVacancy(cursor, vacancy):
                         "TIMESTAMP \'"+str(vacancy['published_at'])+"\',"+
                         "\'"+str(vacancy['snippet']['requirement'])+"\',"+
                         "\'"+str(vacancy['snippet']['responsibility'])+"\',"+
-                        "TIMESTAMP \'"+str(datetime.now().isoformat())+"\');")
+                        "TIMESTAMP \'"+str(getTime().isoformat())+"\');")
+    cursor.execute("INSERT INTO employers(id, name) VALUES("+str(vacancy['employer']['id'])+",\'"+str(vacancy['employer']['name'])+"\') "+
+                    "ON CONFLICT ON CONSTRAINT id_constr DO NOTHING;")
     # check if there's the same first
     if vacancy['address'] != "null":
         insertAddressID(cursor, vacancy)
@@ -106,6 +127,21 @@ def insertVacancy(cursor, vacancy):
                        " WHERE id ="+vacancy['id']+";")
     cursor.execute("SELECT * FROM vacancies;")
     print(cursor.fetchall())
+
+# def updateEmployers(cursor, hh_connection):
+#     cursor.execute("SELECT employer_id FROM vacancies;")
+#     print(cursor.fetchone())
+#     for emploer_id in cursor:
+#         hh_connection.request("GET", "/vacancies?employers?id="+str(employer_id), headers={"User-Agent":header})
+#         employer = getJSONresponse(hh_connection)
+#         #check if there's a record already
+#         cursor.execute("SELECT id FROM employers  \
+#                         WHERE id = " + str(emploer_id) +";")
+#         result = cursor.fetchone()
+#         if not result:
+#             #cursor.execute("INSERT INTO employers VALUES()")
+#             pass
+
 
 # forces the current thread to sleep for ... seconds
 # needed in order to wait until database is started
@@ -131,20 +167,29 @@ pages = int(json_obj['pages'])
 items_per_page = int(json_obj['per_page'])
 
 #for testing purposes
-#pages = 1
+pages = 10
 #items_per_page = 1
 
 for page_num in range(pages):
     hh_connection.request("GET", "/vacancies?industry=7&area=2&page="+str(page_num), headers={"User-Agent":header})
+    vacancies = getJSONresponse(hh_connection)['items']
     for item in range(items_per_page):
-        vacancy = getJSONresponse(hh_connection)['items'][item]
+        vacancy = vacancies[item]
         if selectVacancyID(cursor, vacancy['id']):
-            cursor.execute("UPDATE vacancies SET last_update = TIMESTAMP \'"+str(datetime.now().isoformat())+"\');")
+            cursor.execute("UPDATE vacancies SET last_update = TIMESTAMP \'"+str(getTime().isoformat())+"\', " +
+                                                 "type = \'open\';")
         else:
             insertVacancy(cursor, vacancy)
 
+yesterday = getTime() - timedelta(days=1)
+cursor.execute("UPDATE vacancies SET type = \'close\' WHERE id = ANY(SELECT id FROM vacancies WHERE last_update < TIMESTAMP \'"+str(yesterday.isoformat())+"\')")
+
 cursor.execute("SELECT * FROM contact_person;")
-print(cursor.fetchall())
+print("contact_person: ", cursor.fetchall())
+cursor.execute("SELECT * FROM employers;")
+print("employers: ", cursor.fetchall())
+cursor.execute("SELECT * FROM vacancies;")
+print("vac: ", cursor.fetchall())
 
 hh_connection.close()
 SQL_connection.close()
