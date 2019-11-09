@@ -17,7 +17,10 @@ $ sudo apt-get install docker-compose
 $ docker-compose build
 
 $ docker-compose up
+```
 
+To delete or rebuild:
+```
 $ docker-compose rm  
 ```
 after finishing working with containers.
@@ -46,3 +49,10 @@ $ docker network ls
 
 $ docker network rm net_name
 ```
+
+To set a scheduled monitoring work you should set a daemon as:
+```
+$ echo "02 15	* * *	root    docker-compose -f /path/to/website-monitoring/docker-compose.yml" >> /etc/crontab
+```
+
+PostgreSQL-Docker continues working after Application-Docker finishes its work. You can stop the PostgreSQL-Docker at this point.
