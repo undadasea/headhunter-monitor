@@ -39,8 +39,8 @@ pages = int(json_obj['pages'])
 items_per_page = int(json_obj['per_page'])
 
 #for testing purposes
-pages = 1
-items_per_page = 1
+#pages = 1
+#items_per_page = 1
 
 
 
