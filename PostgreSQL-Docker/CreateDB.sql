@@ -31,9 +31,9 @@ CREATE TABLE addresses (id serial unique,
                        );
 
 CREATE TABLE contact_person (id serial unique,
-                             name varchar(40),
+                             name text,
                              employer_id int,
-                             email varchar(40),
-                             phone varchar(15),
+                             email text,
+                             phone text,
                              comment text
                             );
