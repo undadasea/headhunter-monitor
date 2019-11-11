@@ -11,7 +11,7 @@ from parse import selectVacancyID, insertVacancy, insertAddress, insertContact, 
 
 def getJSONresponse(connection):
     response = connection.getresponse()
-    string = response.read().decode('utf-8').replace('null', '"null"')
+    string = response.read().decode('utf-8').replace('null', '"null"').replace("'", "`")
     json_obj = json.loads(string)
     return json_obj
 
@@ -39,8 +39,10 @@ pages = int(json_obj['pages'])
 items_per_page = int(json_obj['per_page'])
 
 #for testing purposes
-#pages = 10
-#items_per_page = 1
+pages = 1
+items_per_page = 1
+
+
 
 for page_num in range(pages):
     hh_connection.request("GET", "/vacancies?industry=7&area=2&page="+str(page_num), headers={"User-Agent":header})
