@@ -12,7 +12,6 @@ def getTime():
 def selectVacancyID(cursor, id_found):
     cursor.execute("SELECT id FROM vacancies WHERE id = "+str(id_found)+";")
     result = cursor.fetchone()
-    print(result)
     if result:
         return result[0]
     else:
@@ -55,7 +54,6 @@ def insertContact(cursor, vacancy):
         cursor.execute("SELECT id FROM contact_person  \
                         WHERE name = "+"\'"+vacancy['contacts']['name']+"\'"+";")
         result = cursor.fetchall()
-        print("result = ", result)
 
         if vacancy['contacts']['phones'] != []:
             cursor.execute("UPDATE contact_person \
@@ -70,7 +68,6 @@ def insertContact(cursor, vacancy):
 
 
 def insertVacancy(cursor, vacancy):
-    print("in insert: ", vacancy)
     try:
         cursor.execute("INSERT INTO vacancies(id, \
                                               name, \
@@ -116,5 +113,3 @@ def insertVacancy(cursor, vacancy):
                            " WHERE id ="+vacancy['id']+";")
     except KeyError:
         print("Vacancy wasn't inserted")
-    cursor.execute("SELECT * FROM vacancies;")
-    print(cursor.fetchall())
