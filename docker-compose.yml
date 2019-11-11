@@ -15,7 +15,7 @@ services:
   python_docker:
     build:
       context: .
-      dockerfile: /Application-Docker/Dockerfile
+      dockerfile: ./Application-Docker/Dockerfile
     container_name: Python-Docker
     # host:container
     ports:
